@@ -114,9 +114,11 @@ def list_runs():
     import time as _time
     now = _time.time()
 
-    # Return cached result if fresh
+    # Return cached result if fresh (invalidated when .env/code changes trigger reload)
     if _state["classified_runs"] is not None and (now - _state["classified_ts"]) < CLASSIFY_CACHE_TTL:
         return _state["classified_runs"]
+
+    _state["classified_runs"] = None  # clear stale cache
 
     try:
         runs = get_all_runs()
@@ -127,7 +129,13 @@ def list_runs():
     total_issues = 0
     result = []
 
+    MIN_RUNTIME = 3600  # Only show runs longer than 1 hour for demo clarity
+
     for run_data in runs:
+        runtime = run_data.get("runtime_seconds") or 0
+        if runtime < MIN_RUNTIME:
+            continue
+
         # Fetch history for classification
         history = []
         real_metrics = {
