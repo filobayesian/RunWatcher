@@ -1,0 +1,6 @@
+fastapi
+uvicorn[standard]
+wandb
+openai
+python-dotenv
+pyyaml

@@ -1,0 +1,65 @@
+# Gemma 9B LoRA GRPO Training Config
+# Task: Generate happy one-liners from movie summaries
+
+model:
+  base_model: "google/gemma-2-9b-it"
+  lora:
+    r: 16
+    alpha: 32
+    bias: "none"
+    target_modules:
+      - q_proj
+      - k_proj
+      - v_proj
+      - o_proj
+      - gate_proj
+      - up_proj
+      - down_proj
+    use_gradient_checkpointing: true
+    random_state: 3407
+  unsloth:
+    dtype: "bfloat16"
+    load_in_4bit: false
+    max_seq_length: 2048
+    attn_implementation: "flash_attention_2"
+
+training:
+  epochs: 5
+  learning_rate: 1e-5
+  kl_coef: 0.01
+  group_size: 10
+  max_tokens: 60
+  train_size: 450
+  val_size: 50
+  reward_scale: 0.1
+
+reward:
+  weights:
+    similarity: 0.4
+    style: 0.1
+    novelty: 0.05
+    curiosity: 0.05
+    t_preference: 0.05
+    toxicity: -1.0
+    length_penalty: 0.0
+  structured_reward:
+    enabled: true
+    weights:
+      faithfulness: 0.4
+      readability: 0.2
+      semantic_similarity: 0.15
+      length_penalty: 0.15
+      coverage: 0.1
+      conciseness: 0.0
+    semantic_similarity:
+      enabled: true
+      reference_phrase: "happiness"
+    length_penalty:
+      target_length_min: 22
+      target_length_max: 28
+      penalty_strength: 0.5
+  safety:
+    toxicity_threshold: 0.8
+    max_regenerations: 2
+
+device: "cuda"
