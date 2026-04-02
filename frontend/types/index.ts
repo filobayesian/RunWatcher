@@ -1,3 +1,22 @@
+export interface WhiteCirclePolicy {
+  id: string;
+  name: string;
+  flagged: boolean;
+}
+
+export interface WhiteCircleFlaggedPolicy {
+  id: string;
+  name: string;
+  flagged_source: string[];
+}
+
+export interface WhiteCircleSafety {
+  flagged: boolean;
+  session_id: string;
+  flagged_policies: WhiteCircleFlaggedPolicy[];
+  all_policies: WhiteCirclePolicy[];
+}
+
 export interface AgentStatusResponse {
   agent_name: string;
   status: string;
@@ -39,6 +58,7 @@ export interface Run {
   issues: RunIssue[];
   config_summary: ConfigSummary;
   metrics_summary: MetricsSummary;
+  safety?: WhiteCircleSafety | null;
 }
 
 export interface DiagnosisResponse {
@@ -46,6 +66,7 @@ export interface DiagnosisResponse {
   diagnosis: string;
   heuristic_alerts: RunIssue[];
   status: "critical" | "warning" | "healthy";
+  safety?: WhiteCircleSafety | null;
 }
 
 export interface ScientistResponse {

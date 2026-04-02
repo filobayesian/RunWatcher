@@ -315,7 +315,92 @@ export default function DetailPanel({ run }: DetailPanelProps) {
       {/* Divider */}
       <div className="border-t border-white/[0.04]" />
 
-      {/* Section 2: Monitor Agent Diagnosis */}
+      {/* Section 2: WhiteCircle Safety */}
+      {run.safety != null && (
+        <section className="space-y-3 animate-in fade-in duration-300">
+          <div className="flex items-center gap-2.5">
+            <div className={`w-7 h-7 rounded-lg flex items-center justify-center border ${
+              run.safety.flagged
+                ? "bg-orange-500/10 border-orange-500/20"
+                : "bg-emerald-500/10 border-emerald-500/20"
+            }`}>
+              <svg
+                className={`w-4 h-4 ${run.safety.flagged ? "text-orange-400" : "text-emerald-400"}`}
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M12.516 2.17a.75.75 0 0 0-1.032 0 11.209 11.209 0 0 1-7.877 3.08.75.75 0 0 0-.722.515A12.74 12.74 0 0 0 2.25 9.75c0 5.942 4.064 10.933 9.563 12.348a.749.749 0 0 0 .374 0c5.499-1.415 9.563-6.406 9.563-12.348 0-1.39-.223-2.73-.635-3.985a.75.75 0 0 0-.722-.516l-.143.001c-2.996 0-5.717-1.17-7.734-3.08Z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </div>
+            <h3 className="text-sm font-semibold text-white tracking-wide">
+              WHITECIRCLE SAFETY
+            </h3>
+            <span className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded border ${
+              run.safety.flagged
+                ? "bg-orange-500/15 text-orange-400 border-orange-500/25"
+                : "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+            }`}>
+              {run.safety.flagged ? "violation detected" : "all clear"}
+            </span>
+          </div>
+
+          <div className="bg-white/[0.02] border border-white/[0.06] rounded-lg overflow-hidden">
+            <div className="px-3 py-2 border-b border-white/[0.06] bg-white/[0.01]">
+              <span className="text-[11px] font-mono uppercase tracking-wider text-zinc-500">
+                Policy Checks — Run Summary
+              </span>
+            </div>
+            <div className="divide-y divide-white/[0.04]">
+              {run.safety.all_policies.map((policy) => (
+                <div key={policy.id} className="flex items-center justify-between px-3 py-2">
+                  <span className="text-sm font-mono text-zinc-400">{policy.name}</span>
+                  <span className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded ${
+                    policy.flagged
+                      ? "bg-orange-500/15 text-orange-400"
+                      : "bg-emerald-500/10 text-emerald-500"
+                  }`}>
+                    {policy.flagged ? "flagged" : "pass"}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Diagnosis-level safety (shown after diagnosis is fetched) */}
+          {diagnosis?.safety != null && (
+            <div className="bg-white/[0.02] border border-white/[0.06] rounded-lg overflow-hidden">
+              <div className="px-3 py-2 border-b border-white/[0.06] bg-white/[0.01]">
+                <span className="text-[11px] font-mono uppercase tracking-wider text-zinc-500">
+                  Policy Checks — Agent Diagnosis
+                </span>
+              </div>
+              <div className="divide-y divide-white/[0.04]">
+                {diagnosis.safety.all_policies.map((policy) => (
+                  <div key={policy.id} className="flex items-center justify-between px-3 py-2">
+                    <span className="text-sm font-mono text-zinc-400">{policy.name}</span>
+                    <span className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded ${
+                      policy.flagged
+                        ? "bg-orange-500/15 text-orange-400"
+                        : "bg-emerald-500/10 text-emerald-500"
+                    }`}>
+                      {policy.flagged ? "flagged" : "pass"}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </section>
+      )}
+
+      {/* Divider */}
+      <div className="border-t border-white/[0.04]" />
+
+      {/* Section 3: Monitor Agent Diagnosis */}
       <section className="space-y-3 animate-in fade-in duration-300">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
@@ -432,7 +517,7 @@ export default function DetailPanel({ run }: DetailPanelProps) {
       {/* Divider */}
       <div className="border-t border-white/[0.04]" />
 
-      {/* Section 3: Scientist Agent */}
+      {/* Section 4: Scientist Agent */}
       <section className="space-y-3 animate-in fade-in duration-300 pb-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">

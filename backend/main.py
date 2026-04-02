@@ -21,6 +21,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from wandb_client import get_all_runs, get_run_history, get_run_by_name, get_history_summary
 from heuristics import classify_run
 from agents import monitor_diagnosis, scientist_recommendation, load_training_config
+from whitecircle_client import check_run_summary, check_diagnosis, format_safety_result
 
 logger = logging.getLogger("runwatcher")
 logging.basicConfig(level=logging.INFO)
@@ -151,6 +152,16 @@ def list_runs():
         classification = classify_run(run_data, history)
         total_issues += len(classification["issues"])
 
+        # WhiteCircle safety check on the run summary
+        safety = None
+        try:
+            raw = check_run_summary(
+                run_data["name"], classification["status"], classification["issues"]
+            )
+            safety = format_safety_result(raw)
+        except Exception as wc_err:
+            logger.warning(f"WhiteCircle check failed for {run_data['name']}: {wc_err}")
+
         result.append({
             "name": run_data["name"],
             "id": run_data["id"],
@@ -161,6 +172,7 @@ def list_runs():
             "issues": classification["issues"],
             "config_summary": run_data.get("config_summary", {}),
             "metrics_summary": run_data.get("metrics_summary", {}),
+            "safety": safety,
         })
 
     _state["issues_found"] = total_issues
@@ -192,11 +204,20 @@ def get_diagnosis(run_name: str):
     # Get Claude diagnosis
     diagnosis_text = monitor_diagnosis(run_data, classification, history_sum)
 
+    # WhiteCircle safety check on the diagnosis text
+    diagnosis_safety = None
+    try:
+        raw = check_diagnosis(run_name, diagnosis_text)
+        diagnosis_safety = format_safety_result(raw)
+    except Exception as wc_err:
+        logger.warning(f"WhiteCircle diagnosis check failed for {run_name}: {wc_err}")
+
     return {
         "run_name": run_name,
         "diagnosis": diagnosis_text,
         "heuristic_alerts": classification["issues"],
         "status": classification["status"],
+        "safety": diagnosis_safety,
     }
 
 

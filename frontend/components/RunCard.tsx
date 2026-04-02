@@ -104,35 +104,61 @@ export default function RunCard({ run, selected, onClick }: RunCardProps) {
             </div>
           </div>
 
-          {/* Issue count */}
-          {run.issues.length > 0 && (
-            <div className="flex items-center gap-1 shrink-0 mt-0.5">
+          {/* Right side: WC badge + issue count */}
+          <div className="flex items-center gap-1.5 shrink-0 mt-0.5">
+            {/* WhiteCircle safety badge */}
+            {run.safety != null && (
               <span
-                className={`font-mono text-xs font-bold ${
-                  run.status === "critical"
-                    ? "text-red-400"
-                    : "text-amber-400"
+                title={
+                  run.safety.flagged
+                    ? `WC flagged: ${run.safety.flagged_policies.map((p) => p.name).join(", ")}`
+                    : "WhiteCircle: no policy violations"
+                }
+                className={`inline-flex items-center gap-0.5 text-[10px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded border ${
+                  run.safety.flagged
+                    ? "bg-orange-500/15 text-orange-400 border-orange-500/25"
+                    : "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
                 }`}
               >
-                {run.issues.length}
+                <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor">
+                  <path
+                    fillRule="evenodd"
+                    d="M12.516 2.17a.75.75 0 0 0-1.032 0 11.209 11.209 0 0 1-7.877 3.08.75.75 0 0 0-.722.515A12.74 12.74 0 0 0 2.25 9.75c0 5.942 4.064 10.933 9.563 12.348a.749.749 0 0 0 .374 0c5.499-1.415 9.563-6.406 9.563-12.348 0-1.39-.223-2.73-.635-3.985a.75.75 0 0 0-.722-.516l-.143.001c-2.996 0-5.717-1.17-7.734-3.08Z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                {run.safety.flagged ? "flagged" : "safe"}
               </span>
-              <svg
-                className={`w-3.5 h-3.5 ${
-                  run.status === "critical"
-                    ? "text-red-500/60"
-                    : "text-amber-500/60"
-                }`}
-                viewBox="0 0 24 24"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003ZM12 8.25a.75.75 0 0 1 .75.75v3.75a.75.75 0 0 1-1.5 0V9a.75.75 0 0 1 .75-.75Zm0 8.25a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </div>
-          )}
+            )}
+
+            {/* Issue count */}
+            {run.issues.length > 0 && (
+              <div className="flex items-center gap-1">
+                <span
+                  className={`font-mono text-xs font-bold ${
+                    run.status === "critical" ? "text-red-400" : "text-amber-400"
+                  }`}
+                >
+                  {run.issues.length}
+                </span>
+                <svg
+                  className={`w-3.5 h-3.5 ${
+                    run.status === "critical"
+                      ? "text-red-500/60"
+                      : "text-amber-500/60"
+                  }`}
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003ZM12 8.25a.75.75 0 0 1 .75.75v3.75a.75.75 0 0 1-1.5 0V9a.75.75 0 0 1 .75-.75Zm0 8.25a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Issue tags */}
