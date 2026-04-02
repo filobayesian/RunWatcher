@@ -1,0 +1,14 @@
+# API keys and secrets
+.env
+
+# Python
+__pycache__/
+*.pyc
+
+# Node
+node_modules/
+frontend/.next/
+frontend/out/
+
+# OS
+.DS_Store
